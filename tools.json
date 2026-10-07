@@ -1,0 +1,28 @@
+{
+  "cargo": {
+    "package": "rust",
+    "build": "cargo:host",
+    "description": "rust:host and cargo:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "aarch64", "project": "ARM", "arch": "aarch64", "device": "ARMv8" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv7ve", "project": "RPi", "arch": "arm", "device": "RPi2" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv7a", "project": "ARM", "arch": "arm", "device": "ARMv7" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv6zk", "project": "RPi", "arch": "arm", "device": "RPi" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "aarch64", "project": "ARM", "arch": "aarch64", "device": "ARMv8" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv7ve", "project": "RPi", "arch": "arm", "device": "RPi2" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv7a", "project": "ARM", "arch": "arm", "device": "ARMv7" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv6zk", "project": "RPi", "arch": "arm", "device": "RPi" }
+    ]
+  },
+  "mesa": {
+    "package": "mesa",
+    "build": "mesa:host",
+    "description": "mesa:host tools",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "Generic" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Amlogic", "arch": "aarch64", "device": "Amlogic" }
+    ]
+  }
+}

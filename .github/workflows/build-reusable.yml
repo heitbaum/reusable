@@ -1,0 +1,102 @@
+name: build-reusable
+on:
+  workflow_dispatch:
+    inputs:
+      gitref_to_build:
+        description: "LibreELEC.tv gitref tag, branch or hash to build"
+        default: reusable
+        required: true
+        type: string
+      buildos:
+        description: "docker image to build with"
+        default: resolute
+        required: true
+        type: choice
+        options:
+          - resolute
+      tool:
+        description: "reusable tool to build, see tools.json"
+        default: all
+        required: true
+        type: choice
+        options:
+          - all
+          - cargo
+          - mesa
+      host:
+        description: "build host"
+        default: all
+        required: true
+        type: choice
+        options:
+          - all
+          - x86_64
+          - aarch64
+  schedule:
+    # The times are specified in UTC
+    - cron: "15 13 * * *"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    name: Plan the builds and create the releases
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: "reusable"
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.gitref_to_build || 'reusable' }}
+          fetch-depth: 2
+          repository: "${{ github.repository_owner }}/LibreELEC.tv"
+          path: "LibreELEC.tv"
+
+      # name every archive, and publish it here, as the build jobs will
+      - name: Point LibreELEC.tv at this repository
+        run: |
+          cd LibreELEC.tv
+          sed -i -e 's/BUILD_REUSABLE="[^"]*"/BUILD_REUSABLE="all"/' \
+                 -e 's/USE_REUSABLE="[a-z]*"/USE_REUSABLE="no"/' \
+                 -e 's|REUSABLE_URL="[^"]*"|REUSABLE_URL="https://github.com/${{ github.repository }}/releases/download"|' \
+                 distributions/LibreELEC/options
+          grep -E '^\s*(BUILD_|USE_)?REUSABLE(_URL)?=' distributions/LibreELEC/options
+
+      - id: plan
+        name: Plan the builds
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 reusable/scripts/plan.py \
+            --tools reusable/tools.json \
+            --tree LibreELEC.tv \
+            --repo "${{ github.repository }}" \
+            --tool "${{ github.event.inputs.tool || 'all' }}" \
+            --host "${{ github.event.inputs.host || 'all' }}" \
+            --notes reusable/CHANGELOG.md >> "${GITHUB_OUTPUT}"
+
+  build:
+    permissions:
+      contents: write
+    name: "${{ matrix.tool }}: ${{ matrix.host }} host, ${{ matrix.target }} target"
+    needs: plan
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    uses: ./.github/workflows/yml-build-reusable.yml
+    with:
+      runner: ${{ matrix.runner }}
+      gitref: ${{ github.event.inputs.gitref_to_build || 'reusable' }}
+      buildos: ${{ github.event.inputs.buildos || 'resolute' }}
+      tool: ${{ matrix.tool }}
+      package: ${{ matrix.package }}
+      build: ${{ matrix.build }}
+      tag: ${{ matrix.tag }}
+      project: ${{ matrix.project }}
+      arch: ${{ matrix.arch }}
+      device: ${{ matrix.device }}
+      group: ${{ matrix.tool }}-${{ matrix.host }}-${{ matrix.target }}
+    secrets: inherit
