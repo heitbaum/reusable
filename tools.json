@@ -24,5 +24,32 @@
       { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "Generic" },
       { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Amlogic", "arch": "aarch64", "device": "Amlogic" }
     ]
+  },
+  "cmake": {
+    "package": "cmake",
+    "build": "cmake:host",
+    "description": "cmake:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "or1k": {
+    "package": "gcc-or1k",
+    "build": "gcc-or1k:host",
+    "description": "binutils-or1k:host and gcc-or1k:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "or1k", "project": "Allwinner", "arch": "aarch64", "device": "H6" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "or1k", "project": "Allwinner", "arch": "aarch64", "device": "H6" }
+    ]
+  },
+  "llvm": {
+    "package": "llvm",
+    "build": "llvm:host",
+    "description": "llvm:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
   }
 }

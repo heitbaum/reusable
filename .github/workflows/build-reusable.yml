@@ -22,7 +22,10 @@ on:
         options:
           - all
           - cargo
+          - cmake
+          - llvm
           - mesa
+          - or1k
       host:
         description: "build host"
         default: all
