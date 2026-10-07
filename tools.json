@@ -34,6 +34,15 @@
       { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
     ]
   },
+  "gettext": {
+    "package": "gettext",
+    "build": "gettext:host",
+    "description": "gettext:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
   "or1k": {
     "package": "gcc-or1k",
     "build": "gcc-or1k:host",

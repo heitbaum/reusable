@@ -23,6 +23,7 @@ on:
           - all
           - cargo
           - cmake
+          - gettext
           - llvm
           - mesa
           - or1k
