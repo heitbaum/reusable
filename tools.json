@@ -60,5 +60,77 @@
       { "host": "x86_64", "runner": "ubuntu-latest", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" },
       { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" }
     ]
+  },
+  "m4": {
+    "package": "m4",
+    "build": "m4:host",
+    "description": "m4:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "bison": {
+    "package": "bison",
+    "build": "bison:host",
+    "description": "bison:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "flex": {
+    "package": "flex",
+    "build": "flex:host",
+    "description": "flex:host and lex",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "ccache": {
+    "package": "ccache",
+    "build": "ccache:host",
+    "description": "ccache:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "heimdal": {
+    "package": "heimdal",
+    "build": "heimdal:host",
+    "description": "heimdal:host asn1 and com_err compilers",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "flatbuffers": {
+    "package": "flatbuffers",
+    "build": "flatbuffers:host",
+    "description": "flatbuffers:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "pcre2": {
+    "package": "pcre2",
+    "build": "pcre2:host",
+    "description": "pcre2:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "libjpeg-turbo": {
+    "package": "libjpeg-turbo",
+    "build": "libjpeg-turbo:host",
+    "description": "libjpeg-turbo:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
   }
 }

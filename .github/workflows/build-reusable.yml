@@ -21,12 +21,20 @@ on:
         type: choice
         options:
           - all
+          - bison
           - cargo
+          - ccache
           - cmake
+          - flatbuffers
+          - flex
           - gettext
+          - heimdal
+          - libjpeg-turbo
           - llvm
+          - m4
           - mesa
           - or1k
+          - pcre2
       host:
         description: "build host"
         default: all
