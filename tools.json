@@ -1,0 +1,168 @@
+{
+  "cargo": {
+    "package": "rust",
+    "build": "cargo:host",
+    "description": "rust:host and cargo:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "aarch64", "project": "ARM", "arch": "aarch64", "device": "ARMv8" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv7ve", "project": "RPi", "arch": "arm", "device": "RPi2" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv7a", "project": "ARM", "arch": "arm", "device": "ARMv7" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv6zk", "project": "RPi", "arch": "arm", "device": "RPi" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "aarch64", "project": "ARM", "arch": "aarch64", "device": "ARMv8" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv7ve", "project": "RPi", "arch": "arm", "device": "RPi2" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv7a", "project": "ARM", "arch": "arm", "device": "ARMv7" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv6zk", "project": "RPi", "arch": "arm", "device": "RPi" }
+    ]
+  },
+  "mesa": {
+    "package": "mesa",
+    "build": "mesa:host",
+    "description": "mesa:host tools",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "Generic" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Amlogic", "arch": "aarch64", "device": "Amlogic" }
+    ]
+  },
+  "cmake": {
+    "package": "cmake",
+    "build": "cmake:host",
+    "description": "cmake:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "gettext": {
+    "package": "gettext",
+    "build": "gettext:host",
+    "description": "gettext:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "or1k": {
+    "package": "gcc-or1k",
+    "build": "gcc-or1k:host",
+    "description": "binutils-or1k:host and gcc-or1k:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "or1k", "project": "Allwinner", "arch": "aarch64", "device": "H6" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "or1k", "project": "Allwinner", "arch": "aarch64", "device": "H6" }
+    ]
+  },
+  "llvm": {
+    "package": "llvm",
+    "build": "llvm:host",
+    "description": "llvm:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "m4": {
+    "package": "m4",
+    "build": "m4:host",
+    "description": "m4:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "bison": {
+    "package": "bison",
+    "build": "bison:host",
+    "description": "bison:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "flex": {
+    "package": "flex",
+    "build": "flex:host",
+    "description": "flex:host and lex",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "ccache": {
+    "package": "ccache",
+    "build": "ccache:host",
+    "description": "ccache:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "heimdal": {
+    "package": "heimdal",
+    "build": "heimdal:host",
+    "description": "heimdal:host asn1 and com_err compilers",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "flatbuffers": {
+    "package": "flatbuffers",
+    "build": "flatbuffers:host",
+    "description": "flatbuffers:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "pcre2": {
+    "package": "pcre2",
+    "build": "pcre2:host",
+    "description": "pcre2:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "libjpeg-turbo": {
+    "package": "libjpeg-turbo",
+    "build": "libjpeg-turbo:host",
+    "description": "libjpeg-turbo:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
+    ]
+  },
+  "binutils": {
+    "package": "binutils",
+    "build": "binutils:host",
+    "description": "binutils:host",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "Generic" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "aarch64", "project": "Amlogic", "arch": "aarch64", "device": "Amlogic" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv7ve", "project": "RPi", "arch": "arm", "device": "RPi2" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv7a", "project": "NXP", "arch": "arm", "device": "iMX6" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "Generic" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "aarch64", "project": "Amlogic", "arch": "aarch64", "device": "Amlogic" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv7ve", "project": "RPi", "arch": "arm", "device": "RPi2" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv7a", "project": "NXP", "arch": "arm", "device": "iMX6" }
+    ]
+  },
+  "gcc-bootstrap": {
+    "package": "gcc",
+    "build": "gcc:bootstrap",
+    "description": "gcc:bootstrap",
+    "builds": [
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "Generic" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "aarch64", "project": "Amlogic", "arch": "aarch64", "device": "Amlogic" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "aarch64-RPi5", "project": "RPi", "arch": "aarch64", "device": "RPi5" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv7ve", "project": "RPi", "arch": "arm", "device": "RPi2" },
+      { "host": "x86_64", "runner": "ubuntu-latest", "target": "armv7a", "project": "NXP", "arch": "arm", "device": "iMX6" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "x86_64", "project": "Generic", "arch": "x86_64", "device": "Generic" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "aarch64", "project": "Amlogic", "arch": "aarch64", "device": "Amlogic" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "aarch64-RPi5", "project": "RPi", "arch": "aarch64", "device": "RPi5" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv7ve", "project": "RPi", "arch": "arm", "device": "RPi2" },
+      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "armv7a", "project": "NXP", "arch": "arm", "device": "iMX6" }
+    ]
+  }
+}

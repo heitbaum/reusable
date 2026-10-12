@@ -1,0 +1,276 @@
+name: yml-build-reusable
+on:
+  workflow_call:
+    inputs:
+      runner:
+        description: "set runs-on for host arch"
+        required: true
+        type: string
+      gitref:
+        description: "LibreELEC.tv git branch or hash to build"
+        required: true
+        type: string
+      buildos:
+        description: "docker image to build with"
+        required: true
+        type: string
+      tool:
+        description: "reusable tool, a key in tools.json"
+        required: true
+        type: string
+      package:
+        description: "package that names the archive"
+        required: true
+        type: string
+      build:
+        description: "what to build, also the BUILD_REUSABLE value"
+        required: true
+        type: string
+      tag:
+        description: "release tag, taken from the archive URL"
+        required: true
+        type: string
+      project:
+        description: "target project"
+        required: true
+        type: string
+      arch:
+        description: "target arch"
+        required: true
+        type: string
+      device:
+        description: "target device"
+        default: ""
+        required: false
+        type: string
+      group:
+        description: "concurrency group"
+        required: true
+        type: string
+
+env:
+  PROJECT: ${{ inputs.project }}
+  ARCH: ${{ inputs.arch }}
+  DEVICE: ${{ inputs.device }}
+  SLACK_WEBHOOK: ${{ secrets.ADDONS_REPO_WEBHOOK_URL }}
+
+concurrency:
+  group: ${{ inputs.group }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ${{ inputs.runner }}
+    permissions:
+      contents: write
+
+    timeout-minutes: 360
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.gitref }}
+          fetch-depth: 2
+          repository: "${{ github.repository_owner }}/LibreELEC.tv"
+          path: "LibreELEC.tv"
+
+      # before anything sources config/options, as the options file would
+      # otherwise override these
+      - name: Customise the checked out git repository
+        run: |
+          cd LibreELEC.tv
+          sed -i -e "s/RUN useradd docker/RUN useradd docker -o -u $(id -u)/" tools/docker/${{ inputs.buildos }}/Dockerfile
+          sed -i -e 's/BUILD_REUSABLE="[^"]*"/BUILD_REUSABLE="${{ inputs.build }}"/' \
+                 -e 's/USE_REUSABLE="[a-z]*"/USE_REUSABLE="no"/' \
+                 -e 's|REUSABLE_URL="[^"]*"|REUSABLE_URL="https://github.com/${{ github.repository }}/releases/download"|' \
+                 distributions/LibreELEC/options
+          grep -E '^\s*(BUILD_|USE_)?REUSABLE(_URL)?=' distributions/LibreELEC/options
+
+      # the archive name carries the host, the target where it matters and a
+      # hash of the recipes, so ask the tree for it and skip a build that has
+      # already been published
+      - id: archive
+        name: Resolve the archive name and check the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd LibreELEC.tv
+          name=$(bash -c '. config/options ${{ inputs.package }} >/dev/null 2>&1; echo "${PKG_REUSABLE_SOURCE_NAME}"')
+          if [ -z "${name}" ]; then
+            echo "unable to resolve the ${{ inputs.tool }} archive name"
+            exit 1
+          fi
+          echo "name=${name}" >> "${GITHUB_OUTPUT}"
+          echo "archive: ${name}"
+          if gh release view "${{ inputs.tag }}" --repo "${{ github.repository }}" --json assets --jq '.assets[].name' | grep -qxF "${name}"; then
+            echo "${name} is already published, nothing to build"
+            echo "build=false" >> "${GITHUB_OUTPUT}"
+          else
+            echo "build=true" >> "${GITHUB_OUTPUT}"
+          fi
+
+      # llvm and the toolchain need far more disk than a hosted runner leaves
+      # free by default
+      - name: Free disk space
+        if: steps.archive.outputs.build == 'true'
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/boost
+          docker system prune -af
+          df -h /
+
+      - name: Create docker image for build
+        if: steps.archive.outputs.build == 'true'
+        run: |
+          cd LibreELEC.tv
+          docker build --pull -t gh-${{ github.run_id }} tools/docker/${{ inputs.buildos }}
+
+      - name: Build LE in docker container
+        if: steps.archive.outputs.build == 'true'
+        run: |
+          cd LibreELEC.tv
+          docker run --rm -v `pwd`:/build \
+                          -w /build -i \
+                          -e PROJECT=${{ env.PROJECT }} \
+                          -e ARCH=${{ env.ARCH }} \
+                          -e DEVICE=${{ env.DEVICE }} \
+                          -e ONELOG=no -e LOGCOMBINE=fail \
+                          -e BUILD_DIR=/build \
+                          -e CCACHE_DISABLE=1 \
+                          gh-${{ github.run_id }} scripts/build_mt ${{ inputs.build }}
+        continue-on-error: true
+
+      # the build directory carries OS_VERSION and DISTRO_VERSION, so find it
+      # rather than spell it out
+      - id: builddir
+        name: Locate the build directory
+        if: steps.archive.outputs.build == 'true'
+        run: |
+          cd LibreELEC.tv
+          dir=$(ls -d build.LibreELEC-* 2>/dev/null | head -1)
+          echo "dir=${dir}" >> "${GITHUB_OUTPUT}"
+          echo "build directory: ${dir}"
+
+      - name: Prepare failed artifacts
+        if: steps.archive.outputs.build == 'true'
+        run: |
+          cd LibreELEC.tv
+          dir="${{ steps.builddir.outputs.dir }}"
+          [ -n "${dir}" ] || exit 0
+          mkdir -p "${dir}/artifact"
+          grep ^FAIL "${dir}/.threads/joblog" 2>/dev/null | \
+            awk '{ print $5, $12 }' | tr ':' '_' | \
+              while read failedpkg failedlog; do
+                mv $(echo ${failedlog} | sed 's#/build/##') \
+                  "${dir}/artifact/${dir}-${failedpkg}-$(echo ${failedlog} | sed 's#.*/##')"
+              done
+
+      - name: Upload failed artifacts
+        if: steps.archive.outputs.build == 'true'
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ inputs.group }}-failed
+          path: LibreELEC.tv/${{ steps.builddir.outputs.dir }}/artifact/
+          if-no-files-found: ignore
+
+      - name: Collect failed build information
+        id: failures
+        if: steps.archive.outputs.build == 'true'
+        run: |
+          dir="LibreELEC.tv/${{ steps.builddir.outputs.dir }}"
+          joblog="${dir}/.threads/joblog"
+          title="${{ inputs.tool }} ${{ env.PROJECT }}.${{ env.ARCH }} (${{ inputs.tag }})"
+          if [ ! -f "${joblog}" ]; then
+            echo "has_failures=true" >> "${GITHUB_OUTPUT}"
+            {
+              echo "text<<EOF"
+              echo "*${title}*\nno build ran\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>"
+              echo "EOF"
+            } >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          failed_lines=$(grep ^FAIL "${joblog}" 2>/dev/null || true)
+          if [ -z "${failed_lines}" ]; then
+            echo "has_failures=false" >> "${GITHUB_OUTPUT}"
+            exit 0
+          fi
+          total=$(python3 -c "import json; print(len(json.load(open('${dir}/.threads/plan.json'))))" 2>/dev/null)
+          [ -z "${total}" ] && total=$(wc -l < "${joblog}" | tr -d ' ')
+          text="*${title}*\n"
+          while IFS= read -r line; do
+            step=$(awk '{ print $2 }' <<< "${line}")
+            pkg=$(awk '{ print $5 }' <<< "${line}")
+            text+="step [${step}/${total}] ${pkg}\n"
+          done <<< "${failed_lines}"
+          text+="<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>"
+          {
+            echo "has_failures=true"
+            echo "text<<EOF"
+            echo "${text}"
+            echo "EOF"
+          } >> "${GITHUB_OUTPUT}"
+
+      - name: Notify failed builds
+        if: steps.failures.outputs.has_failures == 'true' && env.SLACK_WEBHOOK != ''
+        uses: slackapi/slack-github-action@v3
+        with:
+          webhook: ${{ secrets.ADDONS_REPO_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            username: "ADDON Bot"
+            icon_emoji: ":ghost:"
+            channel: "${{ secrets.ADDONS_REPO_WEBHOOK_CHANNEL }}"
+            blocks:
+              - type: header
+                text:
+                  type: plain_text
+                  text: ":red_circle: Build failures"
+                  emoji: true
+              - type: section
+                text:
+                  type: mrkdwn
+                  text: "${{ steps.failures.outputs.text }}"
+
+      - name: Fail the job on build failures
+        if: steps.failures.outputs.has_failures == 'true'
+        run: |
+          echo "the build failed, see the failed artifacts"
+          exit 1
+
+      - name: Clean up - remove docker image tag
+        if: always() && steps.archive.outputs.build == 'true'
+        run: |
+          docker image rm -f gh-${{ github.run_id }}
+
+      - name: Upload the archive to the release
+        if: steps.archive.outputs.build == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd LibreELEC.tv
+          ls -lah target/
+          name="${{ steps.archive.outputs.name }}"
+          test -f "target/${name}" && test -f "target/${name}.sha256"
+          gh release upload "${{ inputs.tag }}" --repo "${{ github.repository }}" \
+            "target/${name}" "target/${name}.sha256"
+
+      - name: Notify job failure
+        if: failure() && steps.failures.outputs.has_failures != 'true' && env.SLACK_WEBHOOK != ''
+        uses: slackapi/slack-github-action@v3
+        with:
+          webhook: ${{ secrets.ADDONS_REPO_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            username: "ADDON Bot"
+            icon_emoji: ":ghost:"
+            channel: "${{ secrets.ADDONS_REPO_WEBHOOK_CHANNEL }}"
+            blocks:
+              - type: header
+                text:
+                  type: plain_text
+                  text: ":red_circle: Job failed"
+                  emoji: true
+              - type: section
+                text:
+                  type: mrkdwn
+                  text: "*${{ inputs.group }}*\n<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>"
