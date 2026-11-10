@@ -79,15 +79,6 @@
       { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
     ]
   },
-  "flex": {
-    "package": "flex",
-    "build": "flex:host",
-    "description": "flex:host and lex",
-    "builds": [
-      { "host": "x86_64", "runner": "ubuntu-latest", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" },
-      { "host": "aarch64", "runner": "ubuntu-24.04-arm", "target": "any", "project": "Generic", "arch": "x86_64", "device": "" }
-    ]
-  },
   "ccache": {
     "package": "ccache",
     "build": "ccache:host",
