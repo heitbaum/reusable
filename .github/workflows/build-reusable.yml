@@ -27,7 +27,6 @@ on:
           - ccache
           - cmake
           - flatbuffers
-          - flex
           - gcc-bootstrap
           - gettext
           - heimdal
